@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Darwix AI - Sales Performance Analytics</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Main Style -->
+    <link rel="stylesheet" href="styles.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="ph ph-hexagon"></i>
+                <span>Darwix AI</span>
+            </div>
+            <nav class="nav-menu">
+                <a href="#" class="nav-item active" data-target="view-performance"><i class="ph ph-chart-line-up"></i> Performance</a>
+                <a href="#" class="nav-item" data-target="view-team"><i class="ph ph-users"></i> Team</a>
+                <a href="#" class="nav-item" data-target="view-coaching"><i class="ph ph-kanban"></i> Coaching</a>
+                <a href="#" class="nav-item" data-target="view-settings"><i class="ph ph-gear"></i> Settings</a>
+            </nav>
+            <div class="theme-toggle" id="theme-toggle">
+                <i class="ph ph-moon"></i>
+                <span>Dark Mode</span>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            
+            <!-- VIEW: PERFORMANCE (Dashboard) -->
+            <div id="view-performance" class="view-section active">
+                <!-- Top Header -->
+                <header class="top-header">
+                    <div>
+                        <h1>Sales Performance Analytics</h1>
+                        <p class="subtitle">Overview and coaching recommendations</p>
+                    </div>
+                    <div class="header-actions">
+                        <select class="filter-select">
+                            <option>This Week</option>
+                            <option>Last Week</option>
+                            <option>This Month</option>
+                        </select>
+                        <button class="btn btn-secondary"><i class="ph ph-download-simple"></i> Download Report</button>
+                    </div>
+                </header>
+
+                <!-- Metrics Cards -->
+                <section class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <span class="metric-title">Team Call Quality</span>
+                            <div class="metric-trend positive"><i class="ph ph-trend-up"></i> 4.2%</div>
+                        </div>
+                        <div class="metric-value">87.5%</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <span class="metric-title">Win Rate</span>
+                            <div class="metric-trend negative"><i class="ph ph-trend-down"></i> 1.1%</div>
+                        </div>
+                        <div class="metric-value">24.3%</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <span class="metric-title">GenAI Nudges Sent</span>
+                            <div class="metric-trend neutral">-</div>
+                        </div>
+                        <div class="metric-value">142</div>
+                    </div>
+                </section>
+
+                <!-- Main Dashboard Area -->
+                <section class="dashboard-grid">
+                    <!-- Trend Chart -->
+                    <div class="card chart-container">
+                        <div class="card-header">
+                            <h2>Agent Score Trends</h2>
+                        </div>
+                        <div class="canvas-wrapper">
+                            <canvas id="scoreTrendChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Underperforming Agents List -->
+                    <div class="card agents-list-container">
+                        <div class="card-header">
+                            <h2>Coaching Opportunities</h2>
+                            <span class="badge">3 Needs Focus</span>
+                        </div>
+                        <ul class="agent-list" id="agent-list">
+                            <!-- Populated by JS -->
+                        </ul>
+                    </div>
+                </section>
+            </div>
+            
+            <!-- VIEW: TEAM (Roster & Table) -->
+            <div id="view-team" class="view-section">
+                <header class="top-header">
+                    <div>
+                        <h1>Team Roster</h1>
+                        <p class="subtitle">Manage agents and view statistics</p>
+                    </div>
+                    <div class="header-actions">
+                        <div class="search-box">
+                            <i class="ph ph-magnifying-glass"></i>
+                            <input type="text" placeholder="Search agents..." class="form-control" style="width:250px;">
+                        </div>
+                        <button class="btn btn-primary"><i class="ph ph-user-plus"></i> Add Agent</button>
+                    </div>
+                </header>
+
+                <div class="card p-0 overflow-hidden">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Agent</th>
+                                <th>Role</th>
+                                <th>Win Rate</th>
+                                <th>Quality Score</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="team-table-body">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- VIEW: COACHING (Kanban Board) -->
+            <div id="view-coaching" class="view-section">
+                <header class="top-header">
+                    <div>
+                        <h1>Coaching Modules</h1>
+                        <p class="subtitle">Track active training workflows and GenAI Nudges</p>
+                    </div>
+                    <div class="header-actions">
+                        <button class="btn btn-primary"><i class="ph ph-plus"></i> Create Nudge</button>
+                    </div>
+                </header>
+                
+                <div class="kanban-board">
+                    <!-- Assigned Column -->
+                    <div class="kanban-col">
+                        <div class="kanban-header">
+                            <h3>Assigned</h3>
+                            <span class="badge neutral" id="kb-assigned-count">3</span>
+                        </div>
+                        <div class="kanban-cards" id="kb-assigned">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                    <!-- In Progress Column -->
+                    <div class="kanban-col">
+                        <div class="kanban-header">
+                            <h3>In Progress</h3>
+                            <span class="badge warning" id="kb-progress-count">2</span>
+                        </div>
+                        <div class="kanban-cards" id="kb-progress">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                    <!-- Completed Column -->
+                    <div class="kanban-col">
+                        <div class="kanban-header">
+                            <h3>Completed (7d)</h3>
+                            <span class="badge success" id="kb-completed-count">1</span>
+                        </div>
+                        <div class="kanban-cards" id="kb-completed">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW: SETTINGS -->
+            <div id="view-settings" class="view-section">
+                <header class="top-header">
+                    <div>
+                        <h1>Workspace Settings</h1>
+                        <p class="subtitle">Manage constraints and application preferences</p>
+                    </div>
+                    <button class="btn btn-primary">Save Changes</button>
+                </header>
+                
+                <div class="settings-grid">
+                    <div class="card">
+                        <h2 class="mb-4">Profile Information</h2>
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" class="form-control" value="Cameron Director">
+                        </div>
+                        <div class="form-group mt-3">
+                            <label>Email Address</label>
+                            <input type="email" class="form-control" value="cameron@darwix.ai">
+                        </div>
+                        <div class="form-group mt-3">
+                            <label>Organization Role</label>
+                            <input type="text" class="form-control" value="VP of Global Sales" disabled>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <h2 class="mb-4">Notifications & AI Policies</h2>
+                        <div class="form-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" checked> 
+                                <span>Send weekly performance digest to inbox</span>
+                            </label>
+                        </div>
+                        <div class="form-group mt-3">
+                            <label class="checkbox-label">
+                                <input type="checkbox" checked> 
+                                <span>Alert me on anomalous win-loss data patterns</span>
+                            </label>
+                        </div>
+                        <div class="form-group mt-3">
+                            <label class="checkbox-label">
+                                <input type="checkbox" checked> 
+                                <span>Automatically generate agent coaching suggestions (GenAI)</span>
+                            </label>
+                        </div>
+                        <hr class="my-4">
+                        <h3 class="mb-3">Danger Zone</h3>
+                        <p class="subtitle mb-3">Irreversible actions impacting your workspace layout.</p>
+                        <button class="btn btn-secondary border-danger text-danger">Reset Workspace Data</button>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Agent Drill-Down Profile (Slide Over Panel) -->
+        <div class="drill-down-overlay" id="drill-down-overlay"></div>
+        <aside class="agent-drill-down" id="agent-drill-down">
+            <div class="drill-down-header">
+                <button class="btn-icon" id="close-drill-down"><i class="ph ph-x"></i></button>
+                <div class="agent-profile-header">
+                    <img src="https://i.pravatar.cc/150?u=1" alt="Avatar" id="agent-avatar" class="avatar-lg">
+                    <div>
+                        <h2 id="agent-name">Sarah Jenkins</h2>
+                        <p class="subtitle">Enterprise Sales Executive</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="drill-down-content">
+                <div class="insight-card genai-insight">
+                    <div class="insight-header">
+                        <i class="ph-fill ph-sparkle"></i> GenAI Analysis
+                    </div>
+                    <p id="agent-insight">Loading insight...</p>
+                    <button class="btn btn-primary mt-3" id="open-action-panel">Assign Coaching Module</button>
+                </div>
+
+                <div class="chart-container-sm mt-4">
+                    <h3>Recent Call Scores</h3>
+                    <canvas id="agentScoreChart"></canvas>
+                </div>
+
+                <div class="chart-container-sm mt-4">
+                    <h3>Win/Loss Reasons</h3>
+                    <canvas id="winLossChart"></canvas>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Action Panel Modal -->
+        <div class="modal-overlay" id="action-modal">
+            <div class="modal">
+                <div class="modal-header">
+                    <h2>Assign Nudge / Coaching</h2>
+                    <button class="btn-icon" id="close-modal"><i class="ph ph-x"></i></button>
+                </div>
+                <div class="modal-content">
+                    <p>Assigning module to <strong><span id="modal-agent-name">Sarah Jenkins</span></strong> based on GenAI recommendation.</p>
+                    
+                    <div class="form-group mt-3">
+                        <label>Select Module</label>
+                        <select class="form-control">
+                            <option>Objection Handling: Pricing</option>
+                            <option>Active Listening Techniques</option>
+                            <option>Closing Fundamentals</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group mt-3">
+                        <label>Delivery Method</label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="delivery" checked> Dashboard Nudge
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="delivery"> Email Assignment
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" id="cancel-modal">Cancel</button>
+                    <button class="btn btn-primary" id="confirm-modal">Confirm & Assign</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="app.js"></script>
+</body>
+</html>
